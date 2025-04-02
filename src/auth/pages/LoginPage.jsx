@@ -4,7 +4,7 @@ export const LoginPage = () => {
 
   const navigate = useNavigate()
 
-  //esto nos ayuda para una resteincion para que no pueda regresar y le direge a otra pagina esta conectado al boton
+  //esto nos ayuda para una restencion para que no pueda regresar y se direge a otra pagina:: esta conectado al boton
   const onLogin = () => {
     navigate('/', {
         replace: true

@@ -1,11 +1,12 @@
 
+import { useMemo } from 'react';
 import { getHerosByPublisher } from '../helpers'
 import { HeroCard } from './';
 
 export const HeroList = ( {publisher} ) => {
 
 
-    const heros = getHerosByPublisher(publisher);
+    const heros = useMemo( () => getHerosByPublisher(publisher), [publisher] );
 
 <getHerosByPublisher/>
 
@@ -15,7 +16,7 @@ export const HeroList = ( {publisher} ) => {
             
             {
                 heros.map( heros => (
-                //el map ordena una lista  que tiene heros su key es el id y muesta el superhero
+                //el map ordena una lista  que tiene heros su key es el id y muestra el superhero
                 <HeroCard
                 key={heros.id} {...heros}
                 //desestructuramos todas los datos que tengan en el heroes data ..heros

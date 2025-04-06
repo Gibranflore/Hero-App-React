@@ -8,7 +8,7 @@ export const AppRouter = () => {
             <Routes>
                 <Route path="LoginPage" element={<LoginPage/> } />
                 <Route path="/*" element={<HeroRouters/> } />
-                //Definirse un componente que tenga nuestras rutas
+                //Definir una ruta que tenga nuestro componente
             </Routes>
         </>
     )

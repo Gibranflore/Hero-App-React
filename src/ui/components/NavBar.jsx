@@ -1,7 +1,12 @@
+import { useContext } from 'react';
 import { Link, NavLink, replace, useNavigate } from 'react-router';
+import { AuthContext } from '../../auth/context/AuthContext';
+
 
 
 export const Navbar = () => {
+
+    const { user } = useContext(AuthContext)
 
     const navigate = useNavigate()
 
@@ -51,7 +56,8 @@ export const Navbar = () => {
             <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
                 <ul className="navbar-nav ml-auto">
                     <span className='nav-link nav-item text-primary'>
-                        Gibran
+                        {user?.name}
+                        // el ? es una condicion que si es null no muestra nada pero si tien el dato muestra le name
                     </span>
                     <button 
                     className='nav-item nav-link btn'

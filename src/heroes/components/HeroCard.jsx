@@ -22,14 +22,15 @@ export const HeroCard = ({
     <>
         <div className="col animate__animated animate__fadeIn">
             <div className="card ">
-                <div className="row no-gutters ">
+                {/* aqui esta el background amarillo */}
+                <div className="row no-gutters bg-warning">
                     <div className="col-4 ">
                         <img src={HeroImage} className="card-img  " alt={superhero} />
                     </div>
 
                     <div className="col-8 ">
 
-                        <div className="card-body ">
+                        <div className="card-body">
 
                         <h5 className="card-title">{superhero}</h5>
                         <p className="card-text">{alter_ego}</p>

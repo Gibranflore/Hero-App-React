@@ -5,13 +5,15 @@ import { AuthContext } from '../../auth/context/AuthContext';
 
 
 export const Navbar = () => {
-
-    const { user } = useContext(AuthContext)
+    //exporto el user "El nombre que mostrara que estemos autentificados" y el logout "quitara el nombre del usuario" por que no esata autentificado
+    const { user, logout } = useContext(AuthContext)
 
     const navigate = useNavigate()
 
     const onLogout=()=>{
-    navigate('/LoginPage', {
+        //aqui lo mandamos a llamar cuando le de le boron de logout se salga
+        logout()
+        navigate('/LoginPage', {
         replace: true
     });
     //replace bloquea la pagina anterior para que no puedas regredar
@@ -56,8 +58,8 @@ export const Navbar = () => {
             <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
                 <ul className="navbar-nav ml-auto">
                     <span className='nav-link nav-item text-primary'>
-                        {user?.name}
-                        // el ? es una condicion que si es null no muestra nada pero si tien el dato muestra le name
+                        {user?.name} 
+                        {/* el ? es una condicion que si es null no muestra nada pero si tien el dato muestra le name */}
                     </span>
                     <button 
                     className='nav-item nav-link btn'

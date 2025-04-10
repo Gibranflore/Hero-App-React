@@ -9,10 +9,11 @@ export const LoginPage = () => {
 
   //esto nos ayuda para una restencion para que no pueda regresar y se direge a otra pagina:: esta conectado al boton
   const onLogin = () => {
-
+    
+    const lastPath = localStorage.getItem('lastPath') || '/';
+    
     login('Gibran Flores');
-
-    navigate('/', {
+    navigate( lastPath , {
         replace: true
     })
   }

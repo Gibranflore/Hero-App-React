@@ -1,0 +1,239 @@
+[33mcommit 1c902b8cfe07e81cb772d3168636bda1d886749d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Gibran Flores Mendieta <gibran.floresmendieta@gmail.com>
+Date:   Sun Apr 6 11:26:42 2025 -0600
+
+    Actualizacion de la autentificacion de login
+
+[1mdiff --git a/src/HeroApp.jsx b/src/HeroApp.jsx[m
+[1mindex d71fb08..a9dcbbf 100644[m
+[1m--- a/src/HeroApp.jsx[m
+[1m+++ b/src/HeroApp.jsx[m
+[36m@@ -1,9 +1,12 @@[m
+[32m+[m[32mimport { AuthProvider } from './auth'[m
+ import {AppRouter} from './router/AppRouter'[m
+ [m
+ export const HeroApp = () => {[m
+     return ([m
+     <>[m
+[31m-        <AppRouter/>[m
+[32m+[m[32m        <AuthProvider>[m
+[32m+[m[32m            <AppRouter/>[m
+[32m+[m[32m        </AuthProvider>[m
+     </>[m
+     )[m
+ }[m
+[1mdiff --git a/src/auth/context/AuthContext.jsx b/src/auth/context/AuthContext.jsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..6e495cb[m
+[1m--- /dev/null[m
+[1m+++ b/src/auth/context/AuthContext.jsx[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32mimport { createContext } from "react";[m
+[32m+[m
+[32m+[m
+[32m+[m[32mexport const AuthContext = createContext();[m
+\ No newline at end of file[m
+[1mdiff --git a/src/auth/context/AuthProvider.jsx b/src/auth/context/AuthProvider.jsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..1fcdc59[m
+[1m--- /dev/null[m
+[1m+++ b/src/auth/context/AuthProvider.jsx[m
+[36m@@ -0,0 +1,48 @@[m
+[32m+[m[32m//Va a usar el authcontext y va a proveer toda la imformacion a la aplicacion[m
+[32m+[m
+[32m+[m[32mimport { useReducer } from "react"[m
+[32m+[m[32mimport { AuthContext } from "./AuthContext"[m
+[32m+[m[32mimport { AuthReducer } from "./AuthReducer";[m
+[32m+[m[32mimport { types } from "../types/types";[m
+[32m+[m
+[32m+[m[32mconst init = () => {[m
+[32m+[m[32m    const user = JSON.parse (localStorage.getItem('user')) //para obtener el valor asociado a la clave 'user' en el almacenamiento local del navegador.[m
+[32m+[m[32m    //JSON.parse() convierte este valor, que originalmente es una cadena de texto, de vuelta a un objeto JavaScript.[m
+[32m+[m[32m    return {[m
+[32m+[m[32m        logged: !!user,[m
+[32m+[m[32m        user: user[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mexport const AuthProvider = ({children}) => {[m
+[32m+[m
+[32m+[m[32m    const [authState, dispatch] = useReducer( AuthReducer, {}, init);[m
+[32m+[m
+[32m+[m[41m    [m
+[32m+[m[32m    const login = ( name = '') => {[m
+[32m+[m[32m        const user = { id: 'ABC', name }[m
+[32m+[m[32m        const action = { types: types.login, payload: user }[m
+[32m+[m[32m        //localStorage se guardan como cadenas de texto (string).[m
+[32m+[m[32m        localStorage.setItem('user', JSON.stringify(user) )[m
+[32m+[m
+[32m+[m[32m        const logout = () => {[m
+[32m+[m[32m            localStorage.removeItem('user')[m
+[32m+[m[32m            const action = {}[m
+[32m+[m[32m            dispatch()[m
+[32m+[m[32m            //el dispatch va a esperar la oction que va a limpiarlo[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        dispatch(action);[m
+[32m+[m[41m    [m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    return ([m
+[32m+[m[32m        <AuthContext.Provider value={{[m
+[32m+[m[32m            ...authState,[m
+[32m+[m[32m            login: login[m
+[32m+[m[32m        } } >[m
+[32m+[m
+[32m+[m[32m            {children}[m
+[32m+[m[32m        </AuthContext.Provider>[m
+[32m+[m[32m    )[m
+[32m+[m[32m}[m
+[1mdiff --git a/src/auth/context/AuthReducer.js b/src/auth/context/AuthReducer.js[m
+[1mnew file mode 100644[m
+[1mindex 0000000..499d4af[m
+[1m--- /dev/null[m
+[1m+++ b/src/auth/context/AuthReducer.js[m
+[36m@@ -0,0 +1,25 @@[m
+[32m+[m[32mimport { types } from "../types/types";[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32mexport const AuthReducer = ( state = {}, action ) => { //es state es es estado actual esta vacio[m
+[32m+[m[32m    //el action que estado queremos realizar en el, este tiene login y logout[m
+[32m+[m
+[32m+[m[32m    switch (action.types) {[m
+[32m+[m[32m        case types.login:[m
+[32m+[m[32m            //si estamos autentificados va a mandar el return[m
+[32m+[m[32m            return {[m
+[32m+[m[32m                ...state, //esta si tiene mas valores el state los desestructura de una vez los guarda[m
+[32m+[m[32m                logged: true,[m
+[32m+[m[32m                user: action.payload //va amandar el action y va a guardar datos mandado por el ususario[m
+[32m+[m[32m            };[m
+[32m+[m[41m    [m
+[32m+[m[32m        case types.logout:[m
+[32m+[m[32m            //cuando no estamos autentifiados no va mandar el nombre[m
+[32m+[m[32m            return {[m
+[32m+[m[32m                logged: false,[m
+[32m+[m[32m            };[m
+[32m+[m[32m        default:[m
+[32m+[m[32m            return state;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/src/auth/context/index.js b/src/auth/context/index.js[m
+[1mnew file mode 100644[m
+[1mindex 0000000..a28fcb4[m
+[1m--- /dev/null[m
+[1m+++ b/src/auth/context/index.js[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m
+[32m+[m[32mexport * from './AuthContext'[m
+[32m+[m[32mexport * from './AuthProvider'[m
+[32m+[m[32mexport * from './AuthReducer'[m
+\ No newline at end of file[m
+[1mdiff --git a/src/auth/index.js b/src/auth/index.js[m
+[1mindex 57bd25a..82118ed 100644[m
+[1m--- a/src/auth/index.js[m
+[1m+++ b/src/auth/index.js[m
+[36m@@ -1,2 +1,4 @@[m
+ [m
+ export * from './pages'[m
+[32m+[m[32mexport * from './context'[m
+[41m+[m
+[1mdiff --git a/src/auth/pages/LoginPage.jsx b/src/auth/pages/LoginPage.jsx[m
+[1mindex ebbcce8..f803e2e 100644[m
+[1m--- a/src/auth/pages/LoginPage.jsx[m
+[1m+++ b/src/auth/pages/LoginPage.jsx[m
+[36m@@ -1,11 +1,17 @@[m
+[32m+[m[32mimport { useContext } from "react"[m
+ import { useNavigate } from "react-router"[m
+[32m+[m[32mimport { AuthContext } from "../context/AuthContext"[m
+ [m
+ export const LoginPage = () => {[m
+ [m
+[32m+[m[32m  const {login} = useContext( AuthContext )[m
+   const navigate = useNavigate()[m
+ [m
+   //esto nos ayuda para una restencion para que no pueda regresar y se direge a otra pagina:: esta conectado al boton[m
+   const onLogin = () => {[m
+[32m+[m
+[32m+[m[32m    login('Gibran Flores');[m
+[32m+[m
+     navigate('/', {[m
+         replace: true[m
+     })[m
+[1mdiff --git a/src/auth/types/types.js b/src/auth/types/types.js[m
+[1mnew file mode 100644[m
+[1mindex 0000000..6d41c39[m
+[1m--- /dev/null[m
+[1m+++ b/src/auth/types/types.js[m
+[36m@@ -0,0 +1,6 @@[m
+[32m+[m
+[32m+[m[32m//Los dos tipos de estados que vamos a tener estar registrado y bloqueado[m
+[32m+[m[32mexport const types = {[m
+[32m+[m[32m    login: '[Auth] login',[m
+[32m+[m[32m    logout: '[Auth] logout'[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/src/heroes/components/HeroCard.jsx b/src/heroes/components/HeroCard.jsx[m
+[1mindex c7a7a34..52e49d4 100644[m
+[1m--- a/src/heroes/components/HeroCard.jsx[m
+[1m+++ b/src/heroes/components/HeroCard.jsx[m
+[36m@@ -22,14 +22,15 @@[m [mexport const HeroCard = ({[m
+     <>[m
+         <div className="col animate__animated animate__fadeIn">[m
+             <div className="card ">[m
+[31m-                <div className="row no-gutters ">[m
+[32m+[m[32m                {/* aqui esta el background amarillo */}[m
+[32m+[m[32m                <div className="row no-gutters bg-warning">[m
+                     <div className="col-4 ">[m
+                         <img src={HeroImage} className="card-img  " alt={superhero} />[m
+                     </div>[m
+ [m
+                     <div className="col-8 ">[m
+ [m
+[31m-                        <div className="card-body ">[m
+[32m+[m[32m                        <div className="card-body">[m
+ [m
+                         <h5 className="card-title">{superhero}</h5>[m
+                         <p className="card-text">{alter_ego}</p>[m
+[1mdiff --git a/src/router/AppRouter.jsx b/src/router/AppRouter.jsx[m
+[1mindex 65c91e7..e735dc0 100644[m
+[1m--- a/src/router/AppRouter.jsx[m
+[1m+++ b/src/router/AppRouter.jsx[m
+[36m@@ -8,7 +8,7 @@[m [mexport const AppRouter = () => {[m
+             <Routes>[m
+                 <Route path="LoginPage" element={<LoginPage/> } />[m
+                 <Route path="/*" element={<HeroRouters/> } />[m
+[31m-                //Definirse un componente que tenga nuestras rutas[m
+[32m+[m[32m                //Definir una ruta que tenga nuestro componente[m
+             </Routes>[m
+         </>[m
+     )[m
+[1mdiff --git a/src/ui/components/NavBar.jsx b/src/ui/components/NavBar.jsx[m
+[1mindex a687b95..ddfaee9 100644[m
+[1m--- a/src/ui/components/NavBar.jsx[m
+[1m+++ b/src/ui/components/NavBar.jsx[m
+[36m@@ -1,8 +1,13 @@[m
+[32m+[m[32mimport { useContext } from 'react';[m
+ import { Link, NavLink, replace, useNavigate } from 'react-router';[m
+[32m+[m[32mimport { AuthContext } from '../../auth/context/AuthContext';[m
+[32m+[m
+ [m
+ [m
+ export const Navbar = () => {[m
+ [m
+[32m+[m[32m    const { user } = useContext(AuthContext)[m
+[32m+[m
+     const navigate = useNavigate()[m
+ [m
+     const onLogout=()=>{[m
+[36m@@ -51,7 +56,8 @@[m [mexport const Navbar = () => {[m
+             <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">[m
+                 <ul className="navbar-nav ml-auto">[m
+                     <span className='nav-link nav-item text-primary'>[m
+[31m-                        Gibran[m
+[32m+[m[32m                        {user?.name}[m
+[32m+[m[32m                        // el ? es una condicion que si es null no muestra nada pero si tien el dato muestra le name[m
+                     </span>[m
+                     <button [m
+                     className='nav-item nav-link btn'[m

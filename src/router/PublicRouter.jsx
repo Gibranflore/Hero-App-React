@@ -7,7 +7,7 @@ export const PublicRoute = ( {children} ) => {
     
     const {logged} = useContext(AuthContext)
     
-    //si estoy autentificado muestro el children si no lo envia al login
+    //si estoy autentificado muestro el children si no lo envia al marvel
     return ( logged) ? <Navigate to={ '/marvel' } /> : children 
     
 }

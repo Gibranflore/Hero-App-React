@@ -32,8 +32,6 @@ export const AuthProvider = ({children}) => {
             const action = {types: types.logout};
             dispatch(action);
             //el dispatch va a esperar la oction que va a limpiarlo
-
-        dispatch(action);
     
     }
 
